@@ -18,7 +18,6 @@ df['Name_rating_gap'] = df.apply(lambda row: f"{row['Тикер']},{row['Рей�
 df['Размещениеt'] = pd.to_datetime(df['Размещение'], dayfirst=True)
 df = df.sort_values(by='Размещениеt',ascending=True) #Cортируем от малых к большим
 
-df
 # Создаем Streamlit интерфейс
 st.title('Карта рынка флоутеров')
 
