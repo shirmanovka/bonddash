@@ -48,9 +48,21 @@ f_df = df[
 # Отображение отфильтрованного DataFrame
 st.dataframe(f_df)
 
+# Позволяем пользователям выбирать строки для удаления
+if st.button('Удалить выбранные строки'):
+    # Получаем индексы выбранных строк
+    selected_indices = st.multiselect('Выберите строки для удаления:', f_df.index.tolist())
+    
+    if selected_indices:
+        # Удаляем выбранные строки из DataFrame
+        f_df = f_df.drop(index=selected_indices)
+        st.success("Выбранные строки удалены.")
+    else:
+        st.warning("Не выбраны строки для удаления.")
+        
 # Построение графика
 if not f_df.empty:
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(16, 8))
 
     plt.scatter(f_df['Размещениеt'], f_df['Cspread'], color='darkred', marker='o', s=80, label='Текущий спред')
     plt.scatter(f_df['Размещениеt'], f_df['spread'], color='tan', marker='o', s=80, label='Спред при размещении')
