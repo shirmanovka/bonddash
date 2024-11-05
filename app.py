@@ -9,8 +9,8 @@ df = pd.read_excel('Карта рынка.xlsx', skiprows=1)
 # Преобразуем колонки
 df['Объем, млн'] = pd.to_numeric(df['Объем, млн'], errors='coerce')
 # Формируем расчетные столбцы
-df['spread'] = (df['Спред, пп']  100)
-df['Yield'] = ((100 - df['Цена, пп'])  100) / df['Срок  до погашения / оферты, лет']
+df['spread'] = (df['Спред, пп'] * 100)
+df['Yield'] = ((100 - df['Цена, пп']) * 100) / df['Срок  до погашения / оферты, лет']
 df['Cupon'] = df['spread'] / df['Цена, пп'] * 100 - df['spread']
 df['Cspread'] = round(df['spread'] + df['Cupon'] + df['Yield'])
 df['deltaS'] = round(df['Cspread'] - df['spread'])
