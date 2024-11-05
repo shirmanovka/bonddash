@@ -19,7 +19,7 @@ df['Размещениеt'] = pd.to_datetime(df['Размещение'], dayfirs
 df = df.sort_values(by='Размещениеt',ascending=True) #Cортируем от малых к большим
 
 # Создаем Streamlit интерфейс
-st.title('Финансовый анализ портфолио')
+st.title('Анализ рынка флоутеров')
 
 # Фильтры для столбцов
 tickers = df['Тикер'].unique()
