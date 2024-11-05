@@ -2,26 +2,23 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
-import io  # Не забудьте импортировать io
 
 # Читаем файл xlsx
-@st.cache_data
-def load_data():
-    df = pd.read_excel('C:/Users/ShirmanovKA/Documents/Python_Eat_doc/Карта рынка (1).xlsx', skiprows=1)
-    df['Объем, млн'] = pd.to_numeric(df['Объем, млн'], errors='coerce')  # Преобразует в NaN некорректные значения
-    # Формируем расчетные столбцы
-    df['spread'] = (df['Спред, пп'] * 100)
-    df['Yield'] = ((100 - df['Цена, пп']) * 100) / df['Срок  до погашения / оферты, лет']
-    df['Cupon'] = df['spread'] / df['Цена, пп'] * 100 - df['spread']
-    df['Cspread'] = round(df['spread'] + df['Cupon'] + df['Yield'])
-    df['deltaS'] = round(df['Cspread'] - df['spread'])
-    df['Name_rating_gap'] = df.apply(lambda row: f"{row['Тикер']},{row['Рейтинг']},{row['deltaS']}", axis=1)
-    df['Размещениеt'] = pd.to_datetime(df['Размещение'], dayfirst=True)
-    return df.sort_values(by='Размещениеt', ascending=True)
+df = pd.read_excel(('C:/Users/ShirmanovKA/Documents/Python_Eat_doc/Карта рынка (1).xlsx'), skiprows=1)
 
-# Загружаем данные
-df = load_data()
+df['Объем, млн'] = pd.to_numeric(df['Объем, млн'], errors='coerce')  # Преобразует в NaN некорректные значения
 
+# Формируем расчетные столбцы
+df['spread'] = (df['Спред, пп'] * 100)
+df['Yield'] = ((100 - df['Цена, пп']) * 100) / df['Срок  до погашения / оферты, лет']
+df['Cupon'] = df['spread'] / df['Цена, пп'] * 100 - df['spread']
+df['Cspread'] = round(df['spread'] + df['Cupon'] + df['Yield'])
+df['deltaS'] = round(df['Cspread'] - df['spread'])
+df['Name_rating_gap'] = df.apply(lambda row: f"{row['Тикер']},{row['Рейтинг']},{row['deltaS']}", axis=1)
+df['Размещениеt'] = pd.to_datetime(df['Размещение'], dayfirst=True)
+df = df.sort_values(by='Размещениеt',ascending=True) #Cортируем от малых к большим
+
+df
 # Создаем Streamlit интерфейс
 st.title('Финансовый анализ портфолио')
 
@@ -34,7 +31,7 @@ selected_ratings = st.multiselect('Выберите рейтинг:', ratings)
 
 # Фильтрация данных
 f_df = df[(df['Тикер'].isin(selected_tickers) | (len(selected_tickers) == 0)) &
-           (df['Рейтинг'].isin(selected_ratings) | (len(selected_ratings) == 0))]
+            (df['Рейтинг'].isin(selected_ratings) | (len(selected_ratings) == 0))]
 
 # Отображение отфильтрованного DataFrame
 st.dataframe(f_df)
@@ -48,13 +45,14 @@ if not f_df.empty:
 
     for i, row in f_df.iterrows():
         plt.text(row['Размещение'], row['spread'] + 4, row['Name_rating_gap'], ha='left', fontsize=10)
-
+        
     for i in range(len(f_df)):
         for j in range(len(f_df)): 
-            if f_df['Размещение'].iloc[i] == f_df['Размещение'].iloc[j]:
-                plt.annotate('', xy=(f_df['Размещение'].iloc[j], f_df['Cspread'].iloc[j]),
-                             xytext=(f_df['Размещение'].iloc[i], f_df['spread'].iloc[i]),
-                             arrowprops=dict(arrowstyle='->', color='goldenrod', linewidth=2, shrinkA=7, shrinkB=7))
+                    if f_df['Размещение'].iloc[i] == f_df['Размещение'].iloc[j]:
+                    
+                            plt.annotate ('', xy = (f_df['Размещение'].iloc[j], f_df['Cspread'].iloc[j]),
+                                            xytext=(f_df['Размещение'].iloc[i], f_df['spread'].iloc[i]),
+                                            arrowprops =dict(arrowstyle='->', color='goldenrod', linewidth=2, shrinkA=7,shrinkB=7)) #Рисуем стрелки над точками.    
 
     plt.title('Карта рынка', fontsize=18)
     plt.xlabel('Дата размещения', fontsize=16)
@@ -63,10 +61,14 @@ if not f_df.empty:
     plt.grid()
     plt.xticks(rotation=45)
 
-    # Сохранение графика в буфер памяти
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    buf.seek(0)
+    # Показываем график в Streamlit
+    st.pyplot(plt)
+
+    # Сохранение графика (по желанию)
+    plt.savefig('Карта_рынка.png', format='png')
+    plt.close()
+else:
+    st.write("Нет данных для отображения.")
 
     # Показываем график в Streamlit
     st.pyplot(plt)
