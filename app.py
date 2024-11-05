@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 import streamlit as st
 
 # Читаем файл xlsx
-df = pd.read_excel('Карта рынка.xlsx', skiprows=1)
+df = pd.read_excel(('Карта рынка.xlsx'), skiprows=1)
 
-# Преобразуем колонки
-df['Объем, млн'] = pd.to_numeric(df['Объем, млн'], errors='coerce')
+df['Объем, млн'] = pd.to_numeric(df['Объем, млн'], errors='coerce')  # Преобразует в NaN некорректные значения
+
 # Формируем расчетные столбцы
 df['spread'] = (df['Спред, пп'] * 100)
 df['Yield'] = ((100 - df['Цена, пп']) * 100) / df['Срок  до погашения / оферты, лет']
@@ -16,11 +16,7 @@ df['Cspread'] = round(df['spread'] + df['Cupon'] + df['Yield'])
 df['deltaS'] = round(df['Cspread'] - df['spread'])
 df['Name_rating_gap'] = df.apply(lambda row: f"{row['Тикер']},{row['Рейтинг']},{row['deltaS']}", axis=1)
 df['Размещениеt'] = pd.to_datetime(df['Размещение'], dayfirst=True)
-df = df.sort_values(by='Размещениеt', ascending=True)
-
-# Инициализация состояния сессии для хранения индексов
-if 'selected_indices' not in st.session_state:
-    st.session_state.selected_indices = []
+df = df.sort_values(by='Размещениеt', ascending=True)  # Сортируем от малых к большим
 
 # Создаем Streamlit интерфейс
 st.title('Карта рынка флоутеров')
@@ -32,46 +28,42 @@ selected_tickers = st.multiselect('Выберите тикер:', tickers)
 ratings = df['Рейтинг'].unique()
 selected_ratings = st.multiselect('Выберите рейтинг:', ratings)
 
-# Фильтр по дате
-min_date = df['Размещениеt'].min()
-max_date = df['Размещениеt'].max()
-start_date = st.date_input('Выберите начальную дату:', min_value=min_date, max_value=max_date, value=min_date)
-end_date = st.date_input('Выберите конечную дату:', min_value=start_date, max_value=max_date, value=max_date)
+# Фильтр по диапазону дат
+min_date = df['Размещениеt'].min().date()  # Конвертируем в формат date
+max_date = df['Размещениеt'].max().date()  # Конвертируем в формат date
+selected_date_range = st.date_input("Выберите диапазон дат", [min_date, max_date])
+
+# Создаем новые переменные для хранения выбранных дат в формате datetime
+start_date = pd.to_datetime(selected_date_range[0])
+end_date = pd.to_datetime(selected_date_range[1])
 
 # Фильтрация данных
 f_df = df[
     (df['Тикер'].isin(selected_tickers) | (len(selected_tickers) == 0)) &
     (df['Рейтинг'].isin(selected_ratings) | (len(selected_ratings) == 0)) &
-    (df['Размещениеt'] >= pd.to_datetime(start_date)) &
-    (df['Размещениеt'] <= pd.to_datetime(end_date))
+    (df['Размещениеt'] >= start_date) &
+    (df['Размещениеt'] <= end_date)
 ]
 
 # Отображение отфильтрованного DataFrame
 st.dataframe(f_df)
 
-# Позволяем пользователям выбирать строки для удаления
-selected_indices = st.multiselect('Выберите строки для удаления:', f_df.index.tolist(), default=st.session_state.selected_indices)
-
-if st.button('Удалить выбранные строки'):
-    if selected_indices:
-        # Удаляем выбранные строки из DataFrame
-        f_df = f_df.drop(index=selected_indices)
-        f_df.reset_index(drop=True, inplace=True)  # Сбрасываем индекс после удаления
-
-        # Обновляем состояние сессии для будущих выборов
-        st.session_state.selected_indices = f_df.index.tolist()  # Обновляем список индексов
-        st.success("Выбранные строки удалены.")
-    else:
-        st.warning("Не выбраны строки для удаления.")
-
 # Построение графика
 if not f_df.empty:
     plt.figure(figsize=(12, 6))
+
     plt.scatter(f_df['Размещениеt'], f_df['Cspread'], color='darkred', marker='o', s=80, label='Текущий спред')
     plt.scatter(f_df['Размещениеt'], f_df['spread'], color='tan', marker='o', s=80, label='Спред при размещении')
 
     for i, row in f_df.iterrows():
         plt.text(row['Размещениеt'], row['spread'] + 4, row['Name_rating_gap'], ha='left', fontsize=10)
+        
+    for i in range(len(f_df)):
+        for j in range(len(f_df)): 
+            if f_df['Размещениеt'].iloc[i] == f_df['Размещениеt'].iloc[j]:
+                plt.annotate('', xy=(f_df['Размещениеt'].iloc[j], f_df['Cspread'].iloc[j]),
+                             xytext=(f_df['Размещениеt'].iloc[i], f_df['spread'].iloc[i]),
+                             arrowprops=dict(arrowstyle='->', color='goldenrod', linewidth=2, shrinkA=7, shrinkB=7)) #Рисуем стрелки над точками.    
 
     plt.title('Карта рынка', fontsize=18)
     plt.xlabel('Дата размещения', fontsize=16)
@@ -82,5 +74,6 @@ if not f_df.empty:
 
     # Показываем график в Streamlit
     st.pyplot(plt)
+
 else:
     st.write("Нет данных для отображения.")
