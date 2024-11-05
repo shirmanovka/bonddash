@@ -71,14 +71,13 @@ if not f_df.empty:
     plt.scatter(f_df['Размещениеt'], f_df['Cspread'], color='darkred', marker='o', s=80, label='Текущий спред')
     plt.scatter(f_df['Размещениеt'], f_df['spread'], color='tan', marker='o', s=80, label='Спред при размещении')
 
-    for i, row in f_df.iterrows():
-        plt.text(row['Размещениеt'], row['spread'] + 4, row['Name_rating_gap'], ha='left', fontsize=10)
-            for i in range(len(f_df)):
-                for j in range(len(f_df)): 
-                    if f_df['Размещениеt'].iloc[i] == f_df['Размещениеt'].iloc[j]:
-                        plt.annotate('', xy=(f_df['Размещениеt'].iloc[j], f_df['Cspread'].iloc[j]),
-                                     xytext=(f_df['Размещениеt'].iloc[i], f_df['spread'].iloc[i]),
-                                     arrowprops=dict(arrowstyle='->', color='goldenrod', linewidth=2, shrinkA=7, shrinkB=7)) #Рисуем стрелки над точками.    
+    for i in range(len(f_df)):
+        for j in range(len(f_df)):
+                    if f_df['Размещение'].iloc[i] == f_df['Размещение'].iloc[j]:
+                    
+                            plt.annotate ('', xy = (f_df['Размещение'].iloc[j], f_df['Cspread'].iloc[j]),
+                                            xytext=(f_df['Размещение'].iloc[i], f_df['spread'].iloc[i]),
+                                            arrowprops =dict(arrowstyle='->', color='goldenrod', linewidth=2, shrinkA=7,shrinkB=7)) #Рисуем стрелки над точками.    
 
     plt.title('Карта рынка', fontsize=18)
     plt.xlabel('Дата размещения', fontsize=16)
