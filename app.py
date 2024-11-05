@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import streamlit as st
 
 # Читаем файл xlsx
-df = pd.read_excel(('C:/Users/ShirmanovKA/Documents/Python_Eat_doc/Карта рынка (1).xlsx'), skiprows=1)
+df = pd.read_excel(('Карта рынка.xlsx'), skiprows=1)
 
 df['Объем, млн'] = pd.to_numeric(df['Объем, млн'], errors='coerce')  # Преобразует в NaN некорректные значения
 
