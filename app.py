@@ -48,14 +48,14 @@ f_df = df[
 # Отображение отфильтрованного DataFrame
 st.dataframe(f_df)
 
-# Позволяем пользователям выбирать строки для удаления
+selected_indices = st.multiselect('Выберите строки для удаления:', f_df.index.tolist(), default=st.session_state.selected_indices)
+
 if st.button('Удалить выбранные строки'):
-    # Получаем индексы выбранных строк
-    selected_indices = st.multiselect('Выберите строки для удаления:', f_df.index.tolist())
-    
     if selected_indices:
         # Удаляем выбранные строки из DataFrame
         f_df = f_df.drop(index=selected_indices)
+        # Сохраняем оставшиеся индексы в состояние сессии
+        st.session_state.selected_indices = selected_indices
         st.success("Выбранные строки удалены.")
     else:
         st.warning("Не выбраны строки для удаления.")
