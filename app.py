@@ -64,8 +64,8 @@ if not f_df.empty:
     st.pyplot(plt)
 
     # Сохранение графика (по желанию)
-    plt.savefig('Карта_рынка.png', format='png')
-    plt.close()
+    #plt.savefig('Карта_рынка.png', format='png')
+    #plt.close()
 
     # Загружаем график для кнопки загрузки
     with open('Карта_рынка.png', 'rb') as file:
