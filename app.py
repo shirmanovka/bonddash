@@ -33,15 +33,17 @@ min_date = df['Размещениеt'].min().date()  # Конвертируем 
 max_date = df['Размещениеt'].max().date()  # Конвертируем в формат date
 selected_date_range = st.date_input("Выберите диапазон дат", [min_date, max_date])
 
-# Конвертируем в datetime, чтобы избежать ошибок с типами
-selected_date_range[0] = pd.to_datetime(selected_date_range[0])
-selected_date_range[1] = pd.to_datetime(selected_date_range[1])
+# Создаем новые переменные для хранения выбранных дат в формате datetime
+start_date = pd.to_datetime(selected_date_range[0])
+end_date = pd.to_datetime(selected_date_range[1])
 
 # Фильтрация данных
-f_df = df[(df['Тикер'].isin(selected_tickers) | (len(selected_tickers) == 0)) &
-            (df['Рейтинг'].isin(selected_ratings) | (len(selected_ratings) == 0)) &
-            (df['Размещениеt'] >= selected_date_range[0]) &
-            (df['Размещениеt'] <= selected_date_range[1])]
+f_df = df[
+    (df['Тикер'].isin(selected_tickers) | (len(selected_tickers) == 0)) &
+    (df['Рейтинг'].isin(selected_ratings) | (len(selected_ratings) == 0)) &
+    (df['Размещениеt'] >= start_date) &
+    (df['Размещениеt'] <= end_date)
+]
 
 # Отображение отфильтрованного DataFrame
 st.dataframe(f_df)
