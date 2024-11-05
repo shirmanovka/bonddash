@@ -8,10 +8,9 @@ df = pd.read_excel('Карта рынка.xlsx', skiprows=1)
 
 # Преобразуем колонки
 df['Объем, млн'] = pd.to_numeric(df['Объем, млн'], errors='coerce')
-
 # Формируем расчетные столбцы
-df['spread'] = (df['Спред, пп'] * 100)
-df['Yield'] = ((100 - df['Цена, пп']) * 100) / df['Срок  до погашения / оферты, лет']
+df['spread'] = (df['Спред, пп']  100)
+df['Yield'] = ((100 - df['Цена, пп'])  100) / df['Срок  до погашения / оферты, лет']
 df['Cupon'] = df['spread'] / df['Цена, пп'] * 100 - df['spread']
 df['Cspread'] = round(df['spread'] + df['Cupon'] + df['Yield'])
 df['deltaS'] = round(df['Cspread'] - df['spread'])
@@ -33,10 +32,18 @@ selected_tickers = st.multiselect('Выберите тикер:', tickers)
 ratings = df['Рейтинг'].unique()
 selected_ratings = st.multiselect('Выберите рейтинг:', ratings)
 
+# Фильтр по дате
+min_date = df['Размещениеt'].min()
+max_date = df['Размещениеt'].max()
+start_date = st.date_input('Выберите начальную дату:', min_value=min_date, max_value=max_date, value=min_date)
+end_date = st.date_input('Выберите конечную дату:', min_value=start_date, max_value=max_date, value=max_date)
+
 # Фильтрация данных
 f_df = df[
     (df['Тикер'].isin(selected_tickers) | (len(selected_tickers) == 0)) &
-    (df['Рейтинг'].isin(selected_ratings) | (len(selected_ratings) == 0))
+    (df['Рейтинг'].isin(selected_ratings) | (len(selected_ratings) == 0)) &
+    (df['Размещениеt'] >= pd.to_datetime(start_date)) &
+    (df['Размещениеt'] <= pd.to_datetime(end_date))
 ]
 
 # Отображение отфильтрованного DataFrame
