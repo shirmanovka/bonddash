@@ -29,9 +29,13 @@ ratings = df['Рейтинг'].unique()
 selected_ratings = st.multiselect('Выберите рейтинг:', ratings)
 
 # Фильтр по диапазону дат
-min_date = df['Размещениеt'].min()
-max_date = df['Размещениеt'].max()
+min_date = df['Размещениеt'].min().date()  # Конвертируем в формат date
+max_date = df['Размещениеt'].max().date()  # Конвертируем в формат date
 selected_date_range = st.date_input("Выберите диапазон дат", [min_date, max_date])
+
+# Конвертируем в datetime, чтобы избежать ошибок с типами
+selected_date_range[0] = pd.to_datetime(selected_date_range[0])
+selected_date_range[1] = pd.to_datetime(selected_date_range[1])
 
 # Фильтрация данных
 f_df = df[(df['Тикер'].isin(selected_tickers) | (len(selected_tickers) == 0)) &
@@ -51,13 +55,13 @@ if not f_df.empty:
 
     for i, row in f_df.iterrows():
         plt.text(row['Размещениеt'], row['spread'] + 4, row['Name_rating_gap'], ha='left', fontsize=10)
-        
+
     for i in range(len(f_df)):
         for j in range(len(f_df)): 
             if f_df['Размещениеt'].iloc[i] == f_df['Размещениеt'].iloc[j]:
                 plt.annotate('', xy=(f_df['Размещениеt'].iloc[j], f_df['Cspread'].iloc[j]),
                              xytext=(f_df['Размещениеt'].iloc[i], f_df['spread'].iloc[i]),
-                             arrowprops=dict(arrowstyle='->', color='goldenrod', linewidth=2, shrinkA=7, shrinkB=7))  # Рисуем стрелки над точками.    
+                             arrowprops=dict(arrowstyle='->', color='goldenrod', linewidth=2, shrinkA=7, shrinkB=7))
 
     plt.title('Карта рынка', fontsize=18)
     plt.xlabel('Дата размещения', fontsize=16)
