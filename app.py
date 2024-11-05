@@ -63,16 +63,13 @@ if not f_df.empty:
     # Показываем график в Streamlit
     st.pyplot(plt)
 
-    # Сохранение графика (по желанию)
-    #plt.savefig('Карта_рынка.png', format='png')
-    #plt.close()
-   # Сохранение графика в буфер в памяти
+    # Сохранение графика в буфер памяти
     buf = io.BytesIO()
     plt.savefig(buf, format='png')
-    buf.seek(0)  # Перемещение указателя в начало буфера
+    buf.seek(0)
 
-    # Показываем график и добавляем кнопку для скачивания
-    plt.close()
+    # Показываем график в Streamlit
+    st.pyplot(plt)
 
     # Кнопка для загрузки графика
     st.download_button(
@@ -81,6 +78,6 @@ if not f_df.empty:
         file_name='Карта_рынка.png',
         mime='image/png'
     )
-
+    plt.close()
 else:
     st.write("Нет данных для отображения.")
