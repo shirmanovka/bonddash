@@ -64,8 +64,5 @@ if not f_df.empty:
     # Показываем график в Streamlit
     st.pyplot(plt)
 
-    # Сохранение графика (по желанию)
-    plt.savefig('Карта_рынка.png', format='png')
-    plt.close()
 else:
     st.write("Нет данных для отображения.")
