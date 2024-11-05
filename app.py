@@ -66,15 +66,21 @@ if not f_df.empty:
     # Сохранение графика (по желанию)
     #plt.savefig('Карта_рынка.png', format='png')
     #plt.close()
+   # Сохранение графика в буфер в памяти
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)  # Перемещение указателя в начало буфера
 
-    # Загружаем график для кнопки загрузки
-    with open('Карта_рынка.png', 'rb') as file:
-        btn = st.download_button(
-            label="Скачать график как PNG",
-            data=file,
-            file_name='Карта_рынка.png',
-            mime='image/png'
-        )
+    # Показываем график и добавляем кнопку для скачивания
+    plt.close()
+
+    # Кнопка для загрузки графика
+    st.download_button(
+        label="Скачать график как PNG",
+        data=buf,
+        file_name='Карта_рынка.png',
+        mime='image/png'
+    )
 
 else:
     st.write("Нет данных для отображения.")
