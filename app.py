@@ -60,8 +60,6 @@ if not f_df.empty:
     plt.grid()
     plt.xticks(rotation=45)
 
-    # Показываем график в Streamlit
-    st.pyplot(plt)
 
     # Сохранение графика в буфер памяти
     buf = io.BytesIO()
