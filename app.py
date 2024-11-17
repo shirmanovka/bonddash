@@ -25,8 +25,8 @@ st.sidebar.header('Фильтры')
 
 # Пример фильтров: спросим у пользователя, какой столбец он хочет фильтровать
 # Предположим, у нас есть столбец 'NAME' для примера
-if 'NAME' in market_data_bonds.columns:
-    selected_name = st.sidebar.selectbox('Выберите название:', market_data_bonds['NAME'].unique())
+if 'SECID' in market_data_bonds.columns:
+    selected_name = st.sidebar.selectbox('Выберите название:', market_data_bonds['SECID'].unique())
 else:
     selected_name = None
 
