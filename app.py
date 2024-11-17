@@ -20,6 +20,25 @@ a = len(resp_date)
 
 # Создаем интерфейс Streamlit
 st.title('Анализ бондов')
+# Фильтры в боковой панели
+st.sidebar.header('Фильтры')
+
+# Пример фильтров: спросим у пользователя, какой столбец он хочет фильтровать
+# Предположим, у нас есть столбец 'NAME' для примера
+if 'NAME' in market_data_bonds.columns:
+    selected_name = st.sidebar.selectbox('Выберите название:', market_data_bonds['NAME'].unique())
+else:
+    selected_name = None
+
+# Фильтрация DataFrame
+if selected_name is not None:
+    filtered_data = market_data_bonds[market_data_bonds['NAME'] == selected_name]
+else:
+    filtered_data = market_data_bonds
+
+# Отображаем отфильтрованный DataFrame
+st.subheader('Фильтрованные данные')
+st.dataframe(filtered_data)
 
 # Отображаем отфильтрованный DataFrame
 st.dataframe(market_data_bonds)
