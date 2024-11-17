@@ -3,5 +3,4 @@ streamlit
 matplotlib
 openpyxl
 numpy
-json
 requests
