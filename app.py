@@ -32,7 +32,7 @@ else:
 
 # Фильтрация DataFrame
 if selected_name is not None:
-    filtered_data = market_data_bonds[market_data_bonds['NAME'] == selected_name]
+    filtered_data = market_data_bonds[market_data_bonds['SECID'] == selected_name]
 else:
     filtered_data = market_data_bonds
 
