@@ -55,9 +55,9 @@ else:
 
 
 # Отображаем отфильтрованный DataFrame
-#st.subheader('Фильтрованные данные')
-#st.dataframe(filtered_data)
+st.subheader('Фильтрованные данные')
+st.dataframe(filtered_data)
 
 # Отображаем отфильтрованный DataFrame
-#st.dataframe(market_data_bonds)
-st.dataframe(securities_data_bonds)
+st.dataframe(market_data_bonds)
+#st.dataframe(securities_data_bonds)
