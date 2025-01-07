@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 import pandas as pd
-import altair as alt
+import matplotlib.pyplot as plt
 
 # Заголовок приложения
 st.title("График кривых свопов")
@@ -31,10 +31,11 @@ if st.button('Загрузить данные'):
         filtered_data = curves_data.query("curveid == @swap_curve_filter")
         
         # Строим график
-        chart = alt.Chart(filtered_data).mark_line(color='red').encode(
-            x='tenor:T',
-            y='swaprate:Q'
-        ).properties(title=f"Кривая '{swap_curve_filter}'")
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.plot(filtered_data['tenor'], filtered_data['swaprate'], color='red')
+        ax.set_xlabel('Tenor')
+        ax.set_ylabel('Swap Rate')
+        ax.set_title(f"Кривая '{swap_curve_filter}'")
         
         # Отображаем график
-        st.altair_chart(chart, use_container_width=True)
+        st.pyplot(fig)
