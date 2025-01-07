@@ -4,5 +4,5 @@ matplotlib
 openpyxl
 numpy
 requests
-altair
+plotly.express
 
