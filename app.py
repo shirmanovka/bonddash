@@ -70,13 +70,15 @@ if exchange_rates is not None:
     with col1:
         st.subheader("Доллар США")
         st.write(f"Курс: ${usd_last:.2f}")
-        st.write(f"Изменение: {usd_change:.2f}%")
+        change_color = "green" if usd_change > 0 else "red"
+        st.markdown(f"<p style='font-size:20px;color:{change_color};'>Изменение: {usd_change:.2f}%</p>", unsafe_allow_html=True)
         st.write(f"Дата обновления: {usd_trade_date}")
     
     with col2:
         st.subheader("Евро")
         st.write(f"Курс: €{eur_last:.2f}")
-        st.write(f"Изменение: {eur_change:.2f}%")
+        change_color = "green" if eur_change > 0 else "red"
+        st.markdown(f"<p style='font-size:20px;color:{change_color};'>Изменение: {eur_change:.2f}%</p>", unsafe_allow_html=True)
         st.write(f"Дата обновления: {eur_trade_date}")
 
 # Блок с графиками кривых свопов
