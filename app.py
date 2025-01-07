@@ -22,23 +22,25 @@ def get_swap_curves():
     except Exception as e:
         st.error(f'Произошла ошибка при запросе данных: {e}')
 
-# Отображение данных
-if st.button('Загрузить данные'):
-    curves_data = get_swap_curves()
-    if curves_data is not None:
-        # Убедитесь, что столбец 'swap_curve' существует
-        if 'swap_curve' in curves_data.columns:
-            swap_curve_filter = st.selectbox('Выберите кривую:', options=curves_data['swap_curve'].unique())
-            filtered_data = curves_data.query(f"swap_curve == '{swap_curve_filter}'")
-            
-            # Строим график
-            fig, ax = plt.subplots(figsize=(10, 6))
-            ax.plot(filtered_data['tenor'], filtered_data['swap_rate'], color='darkred')
-            ax.set_xlabel('Срок')
-            ax.set_ylabel('Ставка')
-            ax.set_title(f"Кривая '{swap_curve_filter}'")
-            
-            # Отображаем график
-            st.pyplot(fig)
-        else:
-            st.warning("Столбец 'swap_curve' отсутствует в данных.")
+# Автоматический запрос данных
+curves_data = get_swap_curves()
+
+if curves_data is not None:
+    # Убедитесь, что столбец 'swap_curve' существует
+    if 'swap_curve' in curves_data.columns:
+        swap_curve_filter = st.selectbox('Выберите кривую:', options=curves_data['swap_curve'].unique())
+        filtered_data = curves_data.query(f"swap_curve == '{swap_curve_filter}'")
+        
+        # Строим график
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.plot(filtered_data['tenor'], filtered_data['swap_rate'], color='darkred')
+        ax.set_xlabel('Срок')
+        ax.set_ylabel('Ставка')
+        ax.set_title(f"Кривая '{swap_curve_filter}'")
+        
+        # Отображаем график
+        st.pyplot(fig)
+    else:
+        st.warning("Столбец 'swap_curve' отсутствует в данных.")
+else:
+    st.warning("Не удалось получить данные.")
