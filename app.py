@@ -69,14 +69,14 @@ if exchange_rates is not None:
     
     with col1:
         
-        st.write(f"Курс: ${usd_last:.2f}")
+        st.write(f"Курс $: {usd_last:.2f}")
         change_color = "green" if usd_change > 0 else "red"
         st.markdown(f"Изменение: <span style='color:{change_color}; font-weight:bold; font-size:16px;'>+{abs(usd_change):.2f}%</span>", unsafe_allow_html=True)
         st.write(f"Дата обновления: {usd_trade_date}")
     
     with col2:
        
-        st.write(f"Курс: €{eur_last:.2f}")
+        st.write(f"Курс €: {eur_last:.2f}")
         change_color = "green" if eur_change > 0 else "red"
         st.markdown(f"Изменение: <span style='color:{change_color}; font-weight:bold; font-size:16px;'>+{abs(eur_change):.2f}%</span>", unsafe_allow_html=True)
         st.write(f"Дата обновления: {eur_trade_date}")
