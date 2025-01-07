@@ -47,5 +47,13 @@ if st.button('Обновить курс'):
         }
         new_df = pd.DataFrame(new_values, index=new_index, columns=new_columns)
         
+        # Стилизация ячейки с изменением
+        def style_change(value):
+            color = 'green' if value >= 0 else 'red'
+            return f'color: {color}'
+        
+        # Применяем стилизацию к столбцу "Изменение"
+        styled_df = new_df.style.applymap(style_change, subset=['Изменение'])
+        
         # Отображаем новую таблицу
-        st.dataframe(new_df)
+        st.dataframe(styled_df)
