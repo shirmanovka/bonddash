@@ -34,7 +34,8 @@ if curves_data is not None:
         # Строим график
         fig = px.line(filtered_data, x='tenor', y='swap_rate', title=f"Кривая '{swap_curve_filter}'",
                      labels={'tenor': 'Срок', 'swap_rate': 'Ставка'},
-                     template='plotly_dark')
+                     template='plotly_dark'
+                     color='darkred')
         
         # Отображаем график
         st.plotly_chart(fig, use_container_width=True)
