@@ -26,7 +26,7 @@ def get_swap_curves():
 curves_data = get_swap_curves()
 
 if curves_data is not None:
-    # Убедимся, что столбец 'swap_curve' существует
+    # Убедитесь, что столбец 'swap_curve' существует
     if 'swap_curve' in curves_data.columns:
         swap_curve_filter = st.selectbox('Выберите кривую:', options=curves_data['swap_curve'].unique())
         filtered_data = curves_data.query(f"swap_curve == '{swap_curve_filter}'")
