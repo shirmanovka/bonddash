@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.express as px
 
 # Заголовок приложения
 st.title("График кривых свопов")
@@ -32,14 +32,12 @@ if curves_data is not None:
         filtered_data = curves_data.query(f"swap_curve == '{swap_curve_filter}'")
         
         # Строим график
-        fig, ax = plt.subplots(figsize=(10, 6))
-        ax.plot(filtered_data['tenor'], filtered_data['swap_rate'], color='darkred')
-        ax.set_xlabel('Срок')
-        ax.set_ylabel('Ставка')
-        ax.set_title(f"Кривая '{swap_curve_filter}'")
+        fig = px.line(filtered_data, x='tenor', y='swap_rate', title=f"Кривая '{swap_curve_filter}'",
+                     labels={'tenor': 'Срок', 'swap_rate': 'Ставка'},
+                     template='plotly_dark')
         
         # Отображаем график
-        st.pyplot(fig)
+        st.plotly_chart(fig, use_container_width=True)
     else:
         st.warning("Столбец 'swap_curve' отсутствует в данных.")
 else:
