@@ -52,30 +52,29 @@ def get_swap_curves():
 # Блок с данными ставки ЦБ РФ
 st.header("Курс рубля, ЦБ РФ")
 
-if st.button('Обновить курс'):
-    exchange_rates = get_exchange_rates()
-    if exchange_rates is not None:
-        # Преобразуем DataFrame в нужную форму
-        new_index = ['Доллар', 'Евро']
-        new_columns = ['Курс', 'Изменение', 'Дата обновления']
-        new_values = {
-            'Курс': [exchange_rates['CBRF_USD_LAST'].values[0], exchange_rates['CBRF_EUR_LAST'].values[0]],
-            'Изменение': [exchange_rates['CBRF_USD_LASTCHANGEPRCNT'].values[0], exchange_rates['CBRF_EUR_LASTCHANGEPRCNT'].values[0]],
-            'Дата обновления': [pd.to_datetime(exchange_rates['CBRF_USD_TRADEDATE']).dt.date.values[0],
-                                pd.to_datetime(exchange_rates['CBRF_EUR_TRADEDATE']).dt.date.values[0]]
-        }
-        new_df = pd.DataFrame(new_values, index=new_index, columns=new_columns)
-        
-        # Стилизация ячейки с изменением
-        def style_change(value):
-            color = 'green' if value >= 0 else 'red'
-            return f'color: {color}'
-        
-        # Применяем стилизацию к столбцу "Изменение"
-        styled_df = new_df.style.applymap(style_change, subset=['Изменение'])
-        
-        # Отображаем новую таблицу
-        st.dataframe(styled_df)
+# Получаем данные о курсах валют
+exchange_rates = get_exchange_rates()
+
+if exchange_rates is not None:
+    usd_last = exchange_rates['CBRF_USD_LAST'].values[0]
+    usd_change = exchange_rates['CBRF_USD_LASTCHANGEPRCNT'].values[0]
+    usd_trade_date = pd.to_datetime(exchange_rates['CBRF_USD_TRADEDATE']).dt.date.values[0]
+    
+    eur_last = exchange_rates['CBRF_EUR_LAST'].values[0]
+    eur_change = exchange_rates['CBRF_EUR_LASTCHANGEPRCNT'].values[0]
+    eur_trade_date = pd.to_datetime(exchange_rates['CBRF_EUR_TRADEDATE']).dt.date.values[0]
+    
+    # Выводим данные о долларах
+    st.subheader("Доллар США")
+    st.write(f"Курс: ${usd_last:.2f}")
+    st.write(f"Изменение: {usd_change:.2f}%")
+    st.write(f"Дата обновления: {usd_trade_date}")
+    
+    # Выводим данные о евро
+    st.subheader("Евро")
+    st.write(f"Курс: €{eur_last:.2f}")
+    st.write(f"Изменение: {eur_change:.2f}%")
+    st.write(f"Дата обновления: {eur_trade_date}")
 
 # Блок с графиками кривых свопов
 st.header("Графики кривых свопов")
