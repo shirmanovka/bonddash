@@ -17,17 +17,7 @@ def get_exchange_rates():
             result = response.json()
             col_names = result['cbrf']['columns']
             df = pd.DataFrame(result['cbrf']['data'], columns=col_names)
-            
-            selected_columns = [
-                'CBRF_USD_LAST',
-                'CBRF_USD_LASTCHANGEPRCNT',
-                'CBRF_USD_TRADEDATE',
-                'CBRF_EUR_LAST',
-                'CBRF_EUR_LASTCHANGEPRCNT',
-                'CBRF_EUR_TRADEDATE'
-            ]
-            filtered_df = df[selected_columns]
-            return filtered_df
+            return df
         else:
             st.error(f'Ошибка при получении данных. Код состояния: {response.status_code}')
     except Exception as e:
@@ -47,39 +37,76 @@ def get_swap_curves():
         else:
             st.error(f'Ошибка при получении данных. Код состояния: {response.status_code}')
     except Exception as e:
-        st.error(f'Произошла ошибка при запросе данных: {e}')
+        st.error(f'Произошла ошибка при запросов данных: {e}')
 
-# Блок с данными ставки ЦБ РФ
-st.header("Курс рубля, ЦБ РФ")
-
-# Получаем данные о курсах валют
-exchange_rates = get_exchange_rates()
-
-if exchange_rates is not None:
-    usd_last = exchange_rates['CBRF_USD_LAST'].values[0]
-    usd_change = exchange_rates['CBRF_USD_LASTCHANGEPRCNT'].values[0]
-    usd_trade_date = pd.to_datetime(exchange_rates['CBRF_USD_TRADEDATE']).dt.date.values[0]
+# Функция для получения данных MOEX
+def get_moex_data():
+    moex_url = 'https://iss.moex.com/iss/engines/stock/markets/index/securities/imoex.json'
     
-    eur_last = exchange_rates['CBRF_EUR_LAST'].values[0]
-    eur_change = exchange_rates['CBRF_EUR_LASTCHANGEPRCNT'].values[0]
-    eur_trade_date = pd.to_datetime(exchange_rates['CBRF_EUR_TRADEDATE']).dt.date.values[0]
+    try:
+        response = requests.get(moex_url)
+        if response.status_code == 200:
+            result = response.json()
+            col_names = result['marketdata']['columns']
+            df = pd.DataFrame(result['marketdata']['data'], columns=col_names)
+            return df
+        else:
+            st.error(f'Ошибка при получении данных. Код состояния: {response.status_code}')
+    except Exception as e:
+        st.error(f'Произошла ошибка при запросах данных: {e}')
+
+# Объединенная функция для получения всех данных
+def get_all_data():
+    # Получаем данные по валютам
+    exchange_rates = get_exchange_rates()
+    # Получаем данные по кривым свопов
+    swap_curves = get_swap_curves()
+    # Получаем данные по MOEX
+    moex_data = get_moex_data()
     
-    # Создаем две колонки
-    col1, col2 = st.columns(2)
+    # Объединяем данные в единый DataFrame
+    final_data = pd.concat([exchange_rates, swap_curves, moex_data], axis=1)
+    
+    # Форматируем и добавляем нужные колонки
+    final_data = final_data.reset_index(drop=False)
+    final_data = final_data[['CBRF_USD_LAST', 'swap_rate', 'CURRENTVALUE']]
+    final_data['USD_CHANGE'] = final_data['CBRF_USD_LASTCHANGEPRCNT']
+    final_data['EUR_CHANGE'] = final_data['CBRF_EUR_LASTCHANGEPRCNT']
+    final_data['MOEX_CHANGE'] = final_data['LASTCHANGE']
+    final_data['USD_DATE'] = pd.to_datetime(final_data['CBRF_USD_TRADEDATE']).dt.date
+    final_data['EUR_DATE'] = pd.to_datetime(final_data['CBRF_EUR_TRADEDATE']).dt.date
+    final_data['MOEX_DATE'] = final_data['TRADEDATE']
+    
+    # Разделяем данные на четыре колонки
+    col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        
-        st.write(f"Курс $: {usd_last:.2f}")
-        change_color = "green" if usd_change > 0 else "red"
-        st.markdown(f"Изменение: <span style='color:{change_color}; font-weight:bold; font-size:16px;'>+{abs(usd_change):.2f}%</span>", unsafe_allow_html=True)
-        st.write(f"Дата обновления: {usd_trade_date}")
+        st.subheader("Доллар США")
+        st.write(f"Курс: ${final_data['CBRF_USD_LAST'].round(2)}")
+        change_color = "green" if final_data['USD_CHANGE'] > 0 else "red"
+        st.markdown(f"<p style='color:{change_color}; font-size:20px;'>Изменение: {final_data['USD_CHANGE']:.2f}%</p>", unsafe_allow_html=True)
+        st.write(f"Дата обновления: {final_data['USD_DATE']} (USD)")
     
     with col2:
-       
-        st.write(f"Курс €: {eur_last:.2f}")
-        change_color = "green" if eur_change > 0 else "red"
-        st.markdown(f"Изменение: <span style='color:{change_color}; font-weight:bold; font-size:16px;'>+{abs(eur_change):.2f}%</span>", unsafe_allow_html=True)
-        st.write(f"Дата обновления: {eur_trade_date}")
+        st.subheader("Евро")
+        st.write(f"Курс: €{final_data['CBRF_EUR_LAST'].round(2)}")
+        change_color = "green" if final_data['EUR_CHANGE'] > 0 else "red"
+        st.markdown(f"<p style='color:{change_color}; font-size:20px;'>Изменение: {final_data['EUR_CHANGE']:.2f}%</p>", unsafe_allow_html=True)
+        st.write(f"Дата обновления: {final_data['EUR_DATE']} (EUR)")
+    
+    with col3:
+        st.subheader("RGBI")
+        st.write(f"Курс: {final_data['CURRENTVALUE'].round(2)}")
+        change_color = "green" if final_data['MOEX_CHANGE'] > 0 else "red"
+        st.markdown(f"<p style='color:{change_color}; font-size:20px;'>Изменение: {final_data['MOEX_CHANGE']:.2f}%</p>", unsafe_allow_html=True)
+        st.write(f"Дата обновления: {final_data['MOEX_DATE']} (RGBI)")
+    
+    with col4:
+        st.subheader("IMOEX")
+        st.write(f"Курс: {final_data['CURRENTVALUE'].round(2)}")
+        change_color = "green" if final_data['MOEX_CHANGE'] > 0 else "red"
+        st.markdown(f"<p style='color:{change_color}; font-size:20px;'>Изменение: {final_data['MOEX_CHANGE']:.2f}%</p>", unsafe_allow_html=True)
+        st.write(f"Дата обновления: {final_data['MOEX_DATE']} (IMOEX)")
 
 # Блок с графиками кривых свопов
 st.header("Графики кривых свопов")
@@ -88,7 +115,7 @@ st.header("Графики кривых свопов")
 curves_data = get_swap_curves()
 
 if curves_data is not None:
-    # Убедитесь, что столбец 'swap_curve' существует
+    # Убедимся, что столбец 'swap_curve' существует
     if 'swap_curve' in curves_data.columns:
         swap_curve_filter = st.selectbox('Выберите кривую:', options=curves_data['swap_curve'].unique())
         filtered_data = curves_data.query(f"swap_curve == '{swap_curve_filter}'")
@@ -111,3 +138,19 @@ if curves_data is not None:
         st.warning("Столбец 'swap_curve' отсутствует в данных.")
 else:
     st.warning("Не удалось получить данные.")
+
+# Блок с таблицей MOEX
+st.header("Таблица MOEX")
+
+# Отображение таблицы
+moex_table = final_data
+st.dataframe(moex_table)
+
+# Завершающая часть кода
+if final_data is not None:
+    st.text(f"Данные MOEX успешно получены и отображены.")
+else:
+    st.warning("Не удалось получить данные MOEX.")
+
+# Заключение
+Этот код представляет собой упрощенную версию работы с финансовыми инструментами, включая курсы валют, кривые свопов и данные MOEX. Он обеспечивает простоту взаимодействия с различными источниками данных и улучшает визуализацию финансовых показателей.
