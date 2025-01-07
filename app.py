@@ -1,45 +1,32 @@
-import streamlit as st
-from selenium import webdriver
-from bs4 import BeautifulSoup
+import requests
 import pandas as pd
-import time
+import json
 
 # Заголовок приложения
-st.title("Корпоративный календарь")
+st.title("Курс рубля, ЦБ РФ")
 
-# Запускаем браузер Safari
-driver = webdriver.Safari()
+# Запрос данных о текущих ценах
+moex_url_cbfr = 'https://iss.moex.com//iss/statistics/engines/currency/markets/selt/rates.json'
 
-# Переход к нужной странице
-driver.get("https://www.bondresearch.ru/dashboard/corporate_calendar.html")
+# Получим ответ от сервера и загрузим данные в DataFrame
+response = requests.get(moex_url_cbrf)
+result = response.json()  # Выгружаем JSON напрямую
+col_name_cbrf = result['cbrf']['columns']  # Получаем названия колонок
 
-# Ждем загрузки страницы
-time.sleep(5)
+# Заполняем DataFrame с данными
+data_cbrf = pd.DataFrame(result['cbrf']['data'], columns=col_name)
 
-# Получаем HTML-код страницы
-html = driver.page_source
+# Проверка длины данных (если необходима)
+data_length = len(data_cbrf)  # Получаем количество строк в DataFrame
+selected_columns = [
+    'CBRF_USD_LAST',
+    'CBRF_USD_LASTCHANGEPRCNT',
+    'CBRF_USD_TRADEDATE',
+    'CBRF_EUR_LAST',
+    'CBRF_EUR_LASTCHANGEPRCNT',
+    'CBRF_EUR_TRADEDATE'
+]
+filtered_data = data_cbrf[selected_columns]
 
-# Закрываем браузер
-driver.quit()
-
-# Парсим HTML-код
-soup = BeautifulSoup(html, 'html.parser')
-
-# Находим таблицу с корпоративным календарем
-table = soup.find('table')
-
-# Извлекаем заголовки столбцов
-headers = [th.text.strip() for th in table.find_all('th')]
-
-# Извлекаем строки данных
-data = []
-for row in table.find_all('tr')[1:]:  # Пропускаем заголовки
-    cols = row.find_all('td')
-    cols = [elem.text.strip() for elem in cols]  # Убираем лишние пробелы
-    data.append(cols)
-
-# Создаем DataFrame
-df = pd.DataFrame(data, columns=headers)
-
-# Отображаем DataFrame в Streamlit
-st.dataframe(df)
+# Выводим DataFrame с выбранными столбцами
+display(filtered_data)
