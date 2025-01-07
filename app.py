@@ -27,7 +27,7 @@ if st.button('Загрузить данные'):
     curves_data = get_swap_curves()
     if curves_data is not None:
         # Фильтруем данные по swap_curve
-        swap_curve_filter = st.selectbox('Выберите кривую:', options=curves_data['curveid'].unique())
+        swap_curve_filter = st.selectbox('Выберите кривую:', options=curves_data['swap_curve'].unique())
         filtered_data = curves_data.query("curveid == @swap_curve_filter")
         
         # Строим график
