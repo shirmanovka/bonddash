@@ -36,23 +36,16 @@ def get_exchange_rates():
 if st.button('Обновить курс'):
     exchange_rates = get_exchange_rates()
     if exchange_rates is not None:
+        # Преобразуем DataFrame в нужную форму
+        new_index = ['Доллар', 'Евро']
+        new_columns = ['Курс', 'Изменение', 'Дата обновления']
+        new_values = {
+            'Курс': [exchange_rates['CBRF_USD_LAST'].values[0], exchange_rates['CBRF_EUR_LAST'].values[0]],
+            'Изменение': [exchange_rates['CBRF_USD_LASTCHANGEPRCNT'].values[0], exchange_rates['CBRF_EUR_LASTCHANGEPRCNT'].values[0]],
+            'Дата обновления': [pd.to_datetime(exchange_rates['CBRF_USD_TRADEDATE']).dt.date.values[0],
+                                pd.to_datetime(exchange_rates['CBRF_EUR_TRADEDATE']).dt.date.values[0]]
+        }
+        new_df = pd.DataFrame(new_values, index=new_index, columns=new_columns)
         
-        # Создаем функцию для применения стилей к ячейкам таблицы
-        def highlight_change(s):
-            color = 'green' if s > 0 else 'red'
-            return f'color: {color}'
-        
-        # Применяем стили к столбцам с изменениями
-        styled_df = exchange_rates.style.applymap(highlight_change, subset=['CBRF_USD_LASTCHANGEPRCNT', 'CBRF_EUR_LASTCHANGEPRCNT'])
-        
-        # Формируем HTML-код для отображения валютных иконок
-        usd_icon_html = '<img src="https://www.countryflags.io/us/flat/64.png" alt="USD">'
-        eur_icon_html = '<img src="https://www.countryflags.io/eu/flat/64.png" alt="EUR">'
-        
-        # Добавляем иконки перед значениями курсов
-        exchange_rates['CBRF_USD_LAST'] = usd_icon_html + ' ' + exchange_rates['CBRF_USD_LAST'].astype(str)
-        exchange_rates['CBRF_EUR_LAST'] = eur_icon_html + ' ' + exchange_rates['CBRF_EUR_LAST'].astype(str)
-        
-        # Конвертируем DataFrame в HTML и рендерим его
-        html_table = styled_df.to_html(escape=False, index=False)
-        st.write(html_table, unsafe_allow_html=True)
+        # Отображаем новую таблицу
+        st.dataframe(new_df)
