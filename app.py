@@ -34,8 +34,8 @@ if st.button('Загрузить данные'):
             # Строим график
             fig, ax = plt.subplots(figsize=(10, 6))
             ax.plot(filtered_data['tenor'], filtered_data['swaprate'], color='red')
-            ax.set_xlabel('Tenor')
-            ax.set_ylabel('Swap Rate')
+            ax.set_xlabel('Срок')
+            ax.set_ylabel('Ставка')
             ax.set_title(f"Кривая '{swap_curve_filter}'")
             
             # Отображаем график
