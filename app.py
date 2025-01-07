@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import pandas as pd
 import plotly.express as px
+from datetime import datetime
 
 # Заголовок приложения
 st.title("График кривых свопов")
@@ -30,6 +31,13 @@ if curves_data is not None:
     if 'swap_curve' in curves_data.columns:
         swap_curve_filter = st.selectbox('Выберите кривую:', options=curves_data['swap_curve'].unique())
         filtered_data = curves_data.query(f"swap_curve == '{swap_curve_filter}'")
+        
+        # Получение даты выгрузки
+        trade_date_str = filtered_data['tradedate'].values[0]
+        trade_date = datetime.strptime(trade_date_str, '%Y-%m-%d').strftime('%d.%m.%Y')  # Преобразуем формат даты
+        
+        # Выводим дату выгрузки
+        st.write(f"Дата выгрузки: {tradedate}")
         
         # Строим график
         fig = px.line(filtered_data, x='tenor', y='swap_rate', title=f"Кривая '{swap_curve_filter}'",
