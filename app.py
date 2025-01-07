@@ -26,10 +26,10 @@ def get_swap_curves():
 if st.button('Загрузить данные'):
     curves_data = get_swap_curves()
     if curves_data is not None:
-        # Убедитесь, что столбец 'curveid' существует
-        if 'curveid' in curves_data.columns:
+        # Убедитесь, что столбец 'swap_curve' существует
+        if 'swap_curve' in curves_data.columns:
             swap_curve_filter = st.selectbox('Выберите кривую:', options=curves_data['swap_curve'].unique())
-            filtered_data = curves_data.query(f"curveid == '{swap_curve_filter}'")
+            filtered_data = curves_data.query(f"swap_curve == '{swap_curve_filter}'")
             
             # Строим график
             fig, ax = plt.subplots(figsize=(10, 6))
@@ -41,4 +41,4 @@ if st.button('Загрузить данные'):
             # Отображаем график
             st.pyplot(fig)
         else:
-            st.warning("Столбец 'curveid' отсутствует в данных.")
+            st.warning("Столбец 'swap_curve' отсутствует в данных.")
