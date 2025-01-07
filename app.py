@@ -64,17 +64,20 @@ if exchange_rates is not None:
     eur_change = exchange_rates['CBRF_EUR_LASTCHANGEPRCNT'].values[0]
     eur_trade_date = pd.to_datetime(exchange_rates['CBRF_EUR_TRADEDATE']).dt.date.values[0]
     
-    # Выводим данные о долларах
-    st.subheader("Доллар США")
-    st.write(f"Курс: ${usd_last:.2f}")
-    st.write(f"Изменение: {usd_change:.2f}%")
-    st.write(f"Дата обновления: {usd_trade_date}")
+    # Создаем две колонки
+    col1, col2 = st.columns(2)
     
-    # Выводим данные о евро
-    st.subheader("Евро")
-    st.write(f"Курс: €{eur_last:.2f}")
-    st.write(f"Изменение: {eur_change:.2f}%")
-    st.write(f"Дата обновления: {eur_trade_date}")
+    with col1:
+        st.subheader("Доллар США")
+        st.write(f"Курс: ${usd_last:.2f}")
+        st.write(f"Изменение: {usd_change:.2f}%")
+        st.write(f"Дата обновления: {usd_trade_date}")
+    
+    with col2:
+        st.subheader("Евро")
+        st.write(f"Курс: €{eur_last:.2f}")
+        st.write(f"Изменение: {eur_change:.2f}%")
+        st.write(f"Дата обновления: {eur_trade_date}")
 
 # Блок с графиками кривых свопов
 st.header("Графики кривых свопов")
