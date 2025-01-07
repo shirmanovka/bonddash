@@ -37,7 +37,7 @@ if curves_data is not None:
         trade_date = datetime.strptime(trade_date_str, '%Y-%m-%d').strftime('%d.%m.%Y')  # Преобразуем формат даты
         
         # Выводим дату выгрузки
-        st.write(f"Дата выгрузки: {tradedate}")
+        st.write(f"Дата выгрузки: {trade_date}")
         
         # Строим график
         fig = px.line(filtered_data, x='tenor', y='swap_rate', title=f"Кривая '{swap_curve_filter}'",
