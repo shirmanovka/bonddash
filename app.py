@@ -44,7 +44,7 @@ exchange_rates = get_exchange_rates()
 
 if exchange_rates is not None:
     usd_last = exchange_rates['CBRF_USD_LAST'].values[0]
-    usd_change = float(exchange_rates['CBRF_USD_LASTCHANGEPRCNT'].values[0]
+    usd_change = float(exchange_rates['CBRF_USD_LASTCHANGEPRCNT'][0])
     usd_trade_date = pd.to_datetime(exchange_rates['CBRF_USD_TRADEDATE']).dt.date.values[0]
     
     eur_last = exchange_rates['CBRF_EUR_LAST'].values[0]
