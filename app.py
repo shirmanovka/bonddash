@@ -47,7 +47,7 @@ def main():
         st.text(f"Дата обновления: {imoex_df['SYSTIME'].values[0]}")
     
     if st.button('Обновить данные', key='refresh'):
-        st.experimental_singleton.clear()
+        st.experimental_singleton.mutate()
 
 if __name__ == "__main__":
     main()
