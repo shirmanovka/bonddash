@@ -25,7 +25,7 @@ def main():
     left_column, right_column = st.columns(2)
     
     with left_column:
-        st.subheader(f"RGBI: {load_rgbi()['CURRENTVALUE'].values[0]")
+        st.subheader(f"RGBI: {load_rgbi()['CURRENTVALUE'].values[0]}")
         
         rgbi_df = load_rgbi()
         
