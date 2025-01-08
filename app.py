@@ -76,7 +76,7 @@ if exchange_rates is not None:
     
     eur_last = exchange_rates['CBRF_EUR_LAST'].values[0]
     eur_change = exchange_rates['CBRF_EUR_LASTCHANGEPRCNT'].values[0]
-    eur_trade_date = pd.to_datetime(exchange_rates['CBRF_EUR_TRADEDATE']).dt.date.values[rgbi]
+    eur_trade_date = pd.to_datetime(exchange_rates['CBRF_EUR_TRADEDATE']).dt.date.values[0]
 
     # Создаем три колонки
     col1, col2, col3 = st.columns(3)
