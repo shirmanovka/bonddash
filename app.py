@@ -35,14 +35,14 @@ def main():
         st.text(f"Дата обновления: {rgbi_df['SYSTIME'].values[0]")
     
     with right_column:
-        st.subheader(f"IMOEX: {load_imoex()['CURRENTVALUE'].values[0]")
+        st.subheader(f"IMOEX: {load_imoex()['CURRENTVALUE'].values[0]}")
         
         imoex_df = load_imoex()
         
         last_change = float(imoex_df['LASTCHANGEPRC'].values[0])
         change_color = "green" if last_change >= 0 else "red"
         st.markdown(f"Изменение к закрытию: <span style='color:{change_color}; font-weight:bold; font-size:16px;'>{last_change:.2f}%</span>", unsafe_allow_html=True)
-        st.text(f"Дата обновления: {imoex_df['SYSTIME'].values[0]")
+        st.text(f"Дата обновления: {imoex_df['SYSTIME'].values[0]}")
     
     if st.button('Обновить данные', key='refresh'):
         pass
