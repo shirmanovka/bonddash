@@ -34,7 +34,7 @@ def main():
     left_column, right_column = st.columns(2)
     
     with left_column:
-        st.subheader("RGBI")
+        st.subheader(f"RGBI: {load_rgbi()['CURRENTVALUE'].values[0]}")
         
         rgbi_df = load_rgbi()
         
@@ -42,7 +42,7 @@ def main():
         st.text(f"Дата обновления: {rgbi_df['SYSTIME'].values[0]}")
     
     with right_column:
-        st.subheader("IMOEX")
+        st.subheader(f"IMOEX: {load_imoex()['CURRENTVALUE'].values[0]}")
         
         imoex_df = load_imoex()
         
