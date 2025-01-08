@@ -158,4 +158,4 @@ with right_column:
     st.text(f"Дата обновления: {imoex_df['SYSTIME'].values[0]}")
 
 if st.button('Обновить данные', key='refresh'):
-    st.experimental_rerun()
+    st.script_runner.rerun()
