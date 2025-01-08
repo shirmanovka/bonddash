@@ -8,6 +8,24 @@ from datetime import datetime
 # Заголовок приложения
 st.title("Финансовые инструменты")
 
+def get_data(url):
+    response = requests.get(url)
+    result = response.json()
+    col_names = result['marketdata']['columns']
+    data = pd.DataFrame(result['marketdata']['data'], columns=col_names)
+    return data
+
+
+def load_rgbi():
+    moex_url = 'https://iss.moex.com/iss/engines/stock/markets/index/securities/RGBI.json'
+    df = get_data(moex_url)
+    return df
+
+
+def load_imoex():
+    moex_url = 'https://iss.moex.com/iss/engines/stock/markets/index/securities/IMOEX.json'
+    df = get_data(moex_url)
+    return df
 
 # Функция для получения данных ставки ЦБ РФ
 def get_exchange_rates():
