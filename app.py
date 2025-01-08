@@ -91,7 +91,7 @@ if exchange_rates is not None:
     eur_change = float(exchange_rates['CBRF_EUR_LASTCHANGEPRCNT'].values[0])
     eur_trade_date = pd.to_datetime(exchange_rates['CBRF_EUR_TRADEDATE']).dt.date.values[0]
     
-    # Отображаем курсы валют
+    # Отображаем курсы валют в колонках
     st.subheader(f"USD: {usd_last}")
     change_color = "green" if usd_change >= 0 else "red"
     st.markdown(f"Изменение к закрытию: <span style='color:{change_color}; font-weight:bold; font-size:16px;'>{usd_change:.2f}%</span>", unsafe_allow_html=True)
@@ -135,7 +135,7 @@ st.header("Графики кривых свопов")
 curves_data = get_swap_curves()
 
 if curves_data is not None:
-    # Убедитесь, что столбец 'swap_curve' существует
+    # Убедимся, что столбец 'swap_curve' существует
     if 'swap_curve' in curves_data.columns:
         swap_curve_filter = st.selectbox('Выберите кривую:', options=curves_data['swap_curve'].unique())
         filtered_data = curves_data.query(f"swap_curve == '{swap_curve_filter}'")
@@ -150,6 +150,3 @@ if curves_data is not None:
         # Строим график
         fig = px.line(filtered_data, x='tenor', y='swap_rate', title=f'Кривая свопа "{swap_curve_filter}"')
         st.plotly_chart(fig, use_container_width=True)
-
-if st.button('Обновить данные', key='refresh'):
-    st.script_runner.rerun()
