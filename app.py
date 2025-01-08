@@ -84,53 +84,23 @@ exchange_rates = get_exchange_rates()
 
 if exchange_rates is not None:
     usd_last = exchange_rates['CBRF_USD_LAST'].values[0]
-    usd_change = exchange_rates['CBRF_USD_LASTCHANGEPRCNT'].values[0]
+    usd_change = float(exchange_rates['CBRF_USD_LASTCHANGEPRCNT'].values[0])
     usd_trade_date = pd.to_datetime(exchange_rates['CBRF_USD_TRADEDATE']).dt.date.values[0]
     
     eur_last = exchange_rates['CBRF_EUR_LAST'].values[0]
-    eur_change = exchange_rates['CBRF_EUR_LASTCHANGEPRCNT'].values[0]
+    eur_change = float(exchange_rates['CBRF_EUR_LASTCHANGEPRCNT'].values[0])
     eur_trade_date = pd.to_datetime(exchange_rates['CBRF_EUR_TRADEDATE']).dt.date.values[0]
     
-    # Создаем две колонки
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        
-        st.write(f"Курс $: {usd_last:.2f}")
-        change_color = "green" if usd_change > 0 else "red"
-        st.markdown(f"Изменение: <span style='color:{change_color}; font-weight:bold; font-size:16px;'>+{abs(usd_change):.2f}%</span>", unsafe_allow_html=True)
-        st.write(f"Дата обновления: {usd_trade_date}")
-    
-    with col2:
-       
-        st.write(f"Курс €: {eur_last:.2f}")
-        change_color = "green" if eur_change > 0 else "red"
-        st.markdown(f"Изменение: <span style='color:{change_color}; font-weight:bold; font-size:16px;'>+{abs(eur_change):.2f}%</span>", unsafe_allow_html=True)
-        st.write(f"Дата обновления: {eur_trade_date}")
+    # Отображаем курсы валют
+    st.subheader(f"USD: {usd_last}")
+    change_color = "green" if usd_change >= 0 else "red"
+    st.markdown(f"Изменение к закрытию: <span style='color:{change_color}; font-weight:bold; font-size:16px;'>{usd_change:.2f}%</span>", unsafe_allow_html=True)
+    st.text(f"Дата обновления: {usd_trade_date}")
 
-
-# Блок с графиками кривых свопов
-st.header("Графики кривых свопов")
-
-# Автоматический запрос данных
-curves_data = get_swap_curves()
-
-if curves_data is not None:
-    # Убедитесь, что столбец 'swap_curve' существует
-    if 'swap_curve' in curves_data.columns:
-        swap_curve_filter = st.selectbox('Выберите кривую:', options=curves_data['swap_curve'].unique())
-        filtered_data = curves_data.query(f"swap_curve == '{swap_curve_filter}'")
-        
-        # Получение даты выгрузки
-        trade_date_str = filtered_data['tradedate'].values[0]
-        trade_date = datetime.strptime(trade_date_str, '%Y-%m-%d').strftime('%d.%m.%Y')  # Преобразуем формат даты
-        
-        # Выводим дату выгрузки
-        st.write(f"Дата выгрузки: {trade_date}")
-        
-        # Строим график
-        fig = px.line(filtered_data, x='tenor', y='swap_rate', title=f'Кривая свопа "{swap_curve_filter}"')
-        st.plotly_chart(fig, use_container_width=True)
+    st.subheader(f"EUR: {eur_last}")
+    change_color = "green" if eur_change >= 0 else "red"
+    st.markdown(f"Изменение к закрытию: <span style='color:{change_color}; font-weight:bold; font-size:16px;'>{eur_change:.2f}%</span>", unsafe_allow_html=True)
+    st.text(f"Дата обновления: {eur_trade_date}")
 
 
 # Индексы RGBI и IMOEX
@@ -156,6 +126,30 @@ with right_column:
     change_color = "green" if last_change >= 0 else "red"
     st.markdown(f"Изменение к закрытию: <span style='color:{change_color}; font-weight:bold; font-size:16px;'>{last_change:.2f}%</span>", unsafe_allow_html=True)
     st.text(f"Дата обновления: {imoex_df['SYSTIME'].values[0]}")
+
+
+# Блок с графиками кривых свопов
+st.header("Графики кривых свопов")
+
+# Автоматический запрос данных
+curves_data = get_swap_curves()
+
+if curves_data is not None:
+    # Убедитесь, что столбец 'swap_curve' существует
+    if 'swap_curve' in curves_data.columns:
+        swap_curve_filter = st.selectbox('Выберите кривую:', options=curves_data['swap_curve'].unique())
+        filtered_data = curves_data.query(f"swap_curve == '{swap_curve_filter}'")
+        
+        # Получение даты выгрузки
+        trade_date_str = filtered_data['tradedate'].values[0]
+        trade_date = datetime.strptime(trade_date_str, '%Y-%m-%d').strftime('%d.%m.%Y')  # Преобразуем формат даты
+        
+        # Выводим дату выгрузки
+        st.write(f"Дата выгрузки: {trade_date}")
+        
+        # Строим график
+        fig = px.line(filtered_data, x='tenor', y='swap_rate', title=f'Кривая свопа "{swap_curve_filter}"')
+        st.plotly_chart(fig, use_container_width=True)
 
 if st.button('Обновить данные', key='refresh'):
     st.script_runner.rerun()
