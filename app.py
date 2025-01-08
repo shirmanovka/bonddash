@@ -52,6 +52,20 @@ def get_exchange_rates():
             st.error(f'Ошибка при получении данных. Код состояния: {response.status_code}')
     except Exception as e:
         st.error(f'Произошла ошибка при запросе данных: {e}')
+def get_swap_curves():
+    moex_url = 'https://iss.moex.com//iss/sdfi/curves/securities.json'
+    
+    try:
+        response = requests.get(moex_url)
+        if response.status_code == 200:
+            result = response.json()
+            col_names = result['curves']['columns']
+            df = pd.DataFrame(result['curves']['data'], columns=col_names)
+            return df
+        else:
+            st.error(f'Ошибка при получении данных. Код состояния: {response.status_code}')
+    except Exception as e:
+        st.error(f'Произошла ошибка при запросе данных: {e}')
 
 
 # Блок с данными ставки ЦБ РФ
