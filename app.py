@@ -36,46 +36,6 @@ def get_exchange_rates():
         st.error(f'Произошла ошибка при запросе данных: {e}')
 
 
-# Функция для получения данных кривых свопов
-def get_swap_curves():
-    moex_url = 'https://iss.moex.com//iss/sdfi/curves/securities.json'
-    
-    try:
-        response = requests.get(moex_url)
-        if response.status_code == 200:
-            result = response.json()
-            col_names = result['curves']['columns']
-            df = pd.DataFrame(result['curves']['data'], columns=col_names)
-            return df
-        else:
-            st.error(f'Ошибка при получении данных. Код состояния: {response.status_code}')
-    except Exception as e:
-        st.error(f'Произошла ошибка при запросе данных: {e}')
-
-
-# Функция для получения общих данных с Мосбиржи
-def get_data(url):
-    response = requests.get(url)
-    result = response.json()
-    col_names = result['marketdata']['columns']
-    data = pd.DataFrame(result['marketdata']['data'], columns=col_names)
-    return data
-
-
-# Функция для загрузки индекса RGBI
-def load_rgbi():
-    moex_url = 'https://iss.moex.com/iss/engines/stock/markets/index/securities/RGBI.json'
-    df = get_data(moex_url)
-    return df
-
-
-# Функция для загрузки индекса IMOEX
-def load_imoex():
-    moex_url = 'https://iss.moex.com/iss/engines/stock/markets/index/securities/IMOEX.json'
-    df = get_data(moex_url)
-    return df
-
-
 # Блок с данными ставки ЦБ РФ
 st.header("Курс рубля, ЦБ РФ")
 
@@ -84,24 +44,27 @@ exchange_rates = get_exchange_rates()
 
 if exchange_rates is not None:
     usd_last = exchange_rates['CBRF_USD_LAST'].values[0]
-    usd_change = float(exchange_rates['CBRF_USD_LASTCHANGEPRCNT'].values[0])
+    usd_change = float(exchange_rates['CBRF_USD_LASTCHANGEPRCNT'].values[0]
     usd_trade_date = pd.to_datetime(exchange_rates['CBRF_USD_TRADEDATE']).dt.date.values[0]
     
     eur_last = exchange_rates['CBRF_EUR_LAST'].values[0]
-    eur_change = float(exchange_rates['CBRF_EUR_LASTCHANGEPRCNT'].values[0])
+    eur_change = float(exchange_rates['CBRF_EUR_LASTCHANGEPRCNT'].values[0]
     eur_trade_date = pd.to_datetime(exchange_rates['CBRF_EUR_TRADEDATE']).dt.date.values[0]
     
-    # Отображаем курсы валют в колонках
-    st.subheader(f"USD: {usd_last}")
-    change_color = "green" if usd_change >= 0 else "red"
-    st.markdown(f"Изменение к закрытию: <span style='color:{change_color}; font-weight:bold; font-size:16px;'>{usd_change:.2f}%</span>", unsafe_allow_html=True)
-    st.text(f"Дата обновления: {usd_trade_date}")
-
-    st.subheader(f"EUR: {eur_last}")
-    change_color = "green" if eur_change >= 0 else "red"
-    st.markdown(f"Изменение к закрытию: <span style='color:{change_color}; font-weight:bold; font-size:16px;'>{eur_change:.2f}%</span>", unsafe_allow_html=True)
-    st.text(f"Дата обновления: {eur_trade_date}")
-
+    # Размещаем курсы валют в колонках
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader(f"USD: {usd_last}")
+        change_color = "green" if usd_change >= 0 else "red"
+        st.markdown(f"Изменение к закрытию: <span style='color:{change_color}; font-weight:bold; font-size:16px;'>{usd_change:.2f}%</span>", unsafe_allow_html=True)
+        st.text(f"Дата обновления: {usd_trade_date}")
+    
+    with col2:
+        st.subheader(f"EUR: {eur_last}")
+        change_color = "green" if eur_change >= 0 else "red"
+        st.markdown(f"Изменение к закрытию: <span style='color:{change_color}; font-weight:bold; font-size:16px;'>{eur_change:.2f}%</span>", unsafe_allow_html=True)
+        st.text(f"Дата обновления: {eur_trade_date}")
 
 # Индексы RGBI и IMOEX
 st.header("Индексы")
@@ -127,7 +90,6 @@ with right_column:
     st.markdown(f"Изменение к закрытию: <span style='color:{change_color}; font-weight:bold; font-size:16px;'>{last_change:.2f}%</span>", unsafe_allow_html=True)
     st.text(f"Дата обновления: {imoex_df['SYSTIME'].values[0]}")
 
-
 # Блок с графиками кривых свопов
 st.header("Графики кривых свопов")
 
@@ -150,3 +112,6 @@ if curves_data is not None:
         # Строим график
         fig = px.line(filtered_data, x='tenor', y='swap_rate', title=f'Кривая свопа "{swap_curve_filter}"')
         st.plotly_chart(fig, use_container_width=True)
+
+if st.button('Обновить данные', key='refresh'):
+    st.script_runner.rerun()
