@@ -9,13 +9,13 @@ def get_data(url):
     data = pd.DataFrame(result['marketdata']['data'], columns=col_names)
     return data
 
-@st.cache_data(allow_output_mutation=True)
+@st.cache_data
 def load_rgbi():
     moex_url = 'https://iss.moex.com/iss/engines/stock/markets/index/securities/RGBI.json'
     df = get_data(moex_url)
     return df
 
-@st.cache_data(allow_output_mutation=True)
+@st.cache_data
 def load_imoex():
     moex_url = 'https://iss.moex.com/iss/engines/stock/markets/index/securities/IMOEX.json'
     df = get_data(moex_url)
