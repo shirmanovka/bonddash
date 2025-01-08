@@ -9,13 +9,13 @@ def get_data(url):
     data = pd.DataFrame(result['marketdata']['data'], columns=col_names)
     return data
 
-@st.cache_data
+@st.cache_data(allow_output_mutation=True)
 def load_rgbi():
     moex_url = 'https://iss.moex.com/iss/engines/stock/markets/index/securities/RGBI.json'
     df = get_data(moex_url)
     return df
 
-@st.cache_data
+@st.cache_data(allow_output_mutation=True)
 def load_imoex():
     moex_url = 'https://iss.moex.com/iss/engines/stock/markets/index/securities/IMOEX.json'
     df = get_data(moex_url)
@@ -46,7 +46,8 @@ def main():
         st.markdown(f"Изменение к закрытию: <span style='color:{change_color}; font-weight:bold; font-size:16px;'>{last_change:.2f}%</span>", unsafe_allow_html=True)
         st.text(f"Дата обновления: {imoex_df['SYSTIME'].values[0]}")
     
-    st.button('Обновить данные', key='refresh')
+    if st.button('Обновить данные', key='refresh'):
+        st.experimental_singleton.clear()
 
 if __name__ == "__main__":
     main()
