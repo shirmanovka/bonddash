@@ -48,7 +48,7 @@ if exchange_rates is not None:
     usd_trade_date = pd.to_datetime(exchange_rates['CBRF_USD_TRADEDATE']).dt.date.values[0]
     
     eur_last = exchange_rates['CBRF_EUR_LAST'].values[0]
-    eur_change = float(exchange_rates['CBRF_EUR_LASTCHANGEPRCNT'].values[0]
+    eur_change = float(exchange_rates['CBRF_EUR_LASTCHANGEPRCNT'].values[0])
     eur_trade_date = pd.to_datetime(exchange_rates['CBRF_EUR_TRADEDATE']).dt.date.values[0]
     
     # Размещаем курсы валют в колонках
