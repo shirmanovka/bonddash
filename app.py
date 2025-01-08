@@ -21,13 +21,6 @@ def load_imoex():
     df = get_data(moex_url)
     return df
 
-def color_change(value):
-    value_str = str(value)
-    if value_str.startswith('-'):
-        return f'<span style="color: red">{value_str}</span>'
-    else:
-        return f'<span style="color: green">{value_str}</span>'
-
 def main():
     st.title("Индексы")
     
@@ -38,8 +31,9 @@ def main():
         
         rgbi_df = load_rgbi()
         
-        last_change = rgbi_df['LASTCHANGEPRC'].values[0]
-        st.markdown(f"Изменение к закрытию: {color_change(last_change)}")
+        last_change = float(rgbi_df['LASTCHANGEPRC'].values[0])
+        change_color = "green" if last_change >= 0 else "red"
+        st.markdown(f"Изменение к закрытию: <span style='color:{change_color}; font-weight:bold; font-size:16px;'>{last_change:.2f}%</span>", unsafe_allow_html=True)
         st.text(f"Дата обновления: {rgbi_df['SYSTIME'].values[0]}")
     
     with right_column:
@@ -47,8 +41,9 @@ def main():
         
         imoex_df = load_imoex()
         
-        last_change = imoex_df['LASTCHANGEPRC'].values[0]
-        st.markdown(f"Изменение к закрытию: {color_change(last_change)}")
+        last_change = float(imoex_df['LASTCHANGEPRC'].values[0])
+        change_color = "green" if last_change >= 0 else "red"
+        st.markdown(f"Изменение к закрытию: <span style='color:{change_color}; font-weight:bold; font-size:16px;'>{last_change:.2f}%</span>", unsafe_allow_html=True)
         st.text(f"Дата обновления: {imoex_df['SYSTIME'].values[0]}")
     
     st.button('Обновить данные', key='refresh')
