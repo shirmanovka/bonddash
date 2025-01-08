@@ -22,10 +22,12 @@ def load_imoex():
     return df
 
 def color_change(value):
-    if value.startswith('-'):
-        return f'<span style="color: red">{value}</span>'
+    # Приводим значение к строке
+    value_str = str(value)
+    if value_str.startswith('-'):
+        return f'<span style="color: red">{value_str}</span>'
     else:
-        return f'<span style="color: green">{value}</span>'
+        return f'<span style="color: green">{value_str}</span>'
 
 def main():
     st.title("Индексы")
