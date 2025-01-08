@@ -22,7 +22,6 @@ def load_imoex():
     return df
 
 def color_change(value):
-    # Приводим значение к строке
     value_str = str(value)
     if value_str.startswith('-'):
         return f'<span style="color: red">{value_str}</span>'
@@ -32,38 +31,25 @@ def color_change(value):
 def main():
     st.title("Индексы")
     
-    rgbi_df = load_rgbi()
-    imoex_df = load_imoex()
+    left_column, right_column = st.columns(2)
     
-    # Создаем таблицу для отображения значений
-    table_data = {
-        "RGBI": [
-            f"{rgb_i}" for rgb_i in rgbi_df["CURRENTVALUE"]
-        ],
-        "Изменение": [
-            color_change(change) for change in rgbi_df["LASTCHANGEPRC"]
-        ],
-        "Дата обновления": [
-            f"{date}" for date in rgbi_df["SYSTIME"]
-        ]
-    }
+    with left_column:
+        st.subheader("RGBI")
+        
+        rgbi_df = load_rgbi()
+        
+        st.text(f"Изменение к закрытию: {color_change(rgbi_df['LASTCHANGEPRC'].values[0])}")
+        st.text(f"Дата обновления: {rgbi_df['SYSTIME'].values[0]}")
     
-    table_data_imoex = {
-        "IMOEX": [
-            f"{imoex}" for imoex in imoex_df["CURRENTVALUE"]
-        ],
-        "Изменение": [
-            color_change(change) for change in imoex_df["LASTCHANGEPRC"]
-        ],
-        "Дата обновления": [
-            f"{date}" for date in imoex_df["SYSTIME"]
-        ]
-    }
+    with right_column:
+        st.subheader("IMOEX")
+        
+        imoex_df = load_imoex()
+        
+        st.text(f"Изменение к закрытию: {color_change(imoex_df['LASTCHANGEPRC'].values[0])}")
+        st.text(f"Дата обновления: {imoex_df['SYSTIME'].values[0]}")
     
-    st.write("### Индексы:")
-    st.markdown(pd.DataFrame(table_data).to_html(escape=False), unsafe_allow_html=True)
-    st.write("### IMOEX:")
-    st.markdown(pd.DataFrame(table_data_imoex).to_html(escape=False), unsafe_allow_html=True)
+    st.button('Обновить данные', key='refresh')
 
 if __name__ == "__main__":
     main()
