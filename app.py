@@ -38,7 +38,8 @@ def main():
         
         rgbi_df = load_rgbi()
         
-        st.text(f"Изменение к закрытию: {color_change(rgbi_df['LASTCHANGEPRC'].values[0])}")
+        last_change = rgbi_df['LASTCHANGEPRC'].values[0]
+        st.markdown(f"Изменение к закрытию: {color_change(last_change)}")
         st.text(f"Дата обновления: {rgbi_df['SYSTIME'].values[0]}")
     
     with right_column:
@@ -46,7 +47,8 @@ def main():
         
         imoex_df = load_imoex()
         
-        st.text(f"Изменение к закрытию: {color_change(imoex_df['LASTCHANGEPRC'].values[0])}")
+        last_change = imoex_df['LASTCHANGEPRC'].values[0]
+        st.markdown(f"Изменение к закрытию: {color_change(last_change)}")
         st.text(f"Дата обновления: {imoex_df['SYSTIME'].values[0]}")
     
     st.button('Обновить данные', key='refresh')
