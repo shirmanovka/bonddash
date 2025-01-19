@@ -46,4 +46,4 @@ if st.button("Скачать данные"):
 
         # Вывод последних 5 строк DataFrame с примененной стилизацией
         st.dataframe(styled_df.format({'ИНН эмитента': '{:.0f}'}))
-        st.dataframe(styled_df) 
+    
