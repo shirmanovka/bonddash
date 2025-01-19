@@ -40,4 +40,11 @@ if st.button("Скачать данные"):
         'Дата раскрытия информации'
     ]
         df = df[columns_to_keep]
-        st.write(df.tail(5))  # Вывод последних 5 строк DataFrame
+        
+        def highlight_rows(row):
+            return ['background-color: green' if row['Идентификатор выпуска*'] == "Не присвоен" else '' for _ in row]
+
+        # Применение стилизации
+        styled_df = df.style.apply(highlight_rows, axis=1)
+
+        st.write(styled_df.tail(5))  # Вывод последних 5 строк DataFrame
