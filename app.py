@@ -58,5 +58,18 @@ if st.button("Скачать данные"):
         
         styled_df = df.style.apply(highlight_rows, axis=1)    
             # Вывод последних 5 строк DataFrame с примененной стилизацией
+
+        st.markdown("""
+            <style>
+                .dataframe th, .dataframe td {
+                    padding: 5px;
+                    text-align: left;
+                    font-size: 12px;
+                    white-space: pre-wrap; /* Позволяет переносить текст */
+                }
+            </style>
+        """, unsafe_allow_html=True)
+
+        
         st.dataframe(styled_df.format({'ИНН эмитента': '{:.0f}'}))
     
