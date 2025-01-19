@@ -37,13 +37,26 @@ if st.button("Скачать данные"):
         'Дата раскрытия информации'
     ]
         df = df[columns_to_keep]
+        abbreviations = {
+       'Общество с ограниченной ответственностью': 'OOO',
+       'Публичное акционерное общество': 'ПAO',
+       'Акционерное общество': 'AO'
+        }
+
+   # Замена полных названий на аббревиатуры
+       df['Наименование эмитента'] = df['Naimenovanie emitenta'].replace(abbreviations)
         
         def highlight_rows(row):
             return ['background-color: lightgreen' if row['Идентификатор выпуска*'] == "Не присвоен" else '' for _ in row]
 
         df = df.tail(5)
+        
         styled_df = df.style.apply(highlight_rows, axis=1)
-
-        # Вывод последних 5 строк DataFrame с примененной стилизацией
+        
+        for full_name, abbreviation in abbreviations.items():
+            df['Наименование эмитента'] = df['Наименование эмитента'].replace(full_name, abbreviation, regex=True)
+        
+        styled_df = df.style.apply(highlight_rows, axis=1)    
+            # Вывод последних 5 строк DataFrame с примененной стилизацией
         st.dataframe(styled_df.format({'ИНН эмитента': '{:.0f}'}))
     
