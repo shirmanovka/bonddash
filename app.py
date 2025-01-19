@@ -53,7 +53,7 @@ if st.button("Скачать данные"):
         
         styled_df = df.style.apply(highlight_rows, axis=1)
         
-        for full_name, abbreviation in abbreviations.items():
+        for full_name, abbreviation in abbreviation.items():
             df['Наименование эмитента'] = df['Наименование эмитента'].replace(full_name, abbreviation, regex=True)
         
         styled_df = df.style.apply(highlight_rows, axis=1)    
