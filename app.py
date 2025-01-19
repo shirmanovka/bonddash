@@ -47,4 +47,4 @@ if st.button("Скачать данные"):
         # Применение стилизации
         styled_df = df.style.apply(highlight_rows, axis=1)
 
-        st.write(styled_df.tail(5))  # Вывод последних 5 строк DataFrame
+        st.dataframe(styled_df.tail(5))  # Вывод последних 5 строк DataFrame
