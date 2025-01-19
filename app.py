@@ -2,9 +2,6 @@ import streamlit as st
 import requests
 import pandas as pd
 
-# Установка параметров отображения для pandas
-pd.set_option('display.float_format', '{:.0f}'.format)
-
 # Заголовки для запроса
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
@@ -48,4 +45,5 @@ if st.button("Скачать данные"):
         styled_df = df.style.apply(highlight_rows, axis=1)
 
         # Вывод последних 5 строк DataFrame с примененной стилизацией
+        st.dataframe(styled_df.format({'ИНН эмитента': '{:.0f}'}))
         st.dataframe(styled_df) 
