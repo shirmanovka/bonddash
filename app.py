@@ -37,14 +37,14 @@ if st.button("Скачать данные"):
         'Дата раскрытия информации'
     ]
         df = df[columns_to_keep]
-        abbreviations = {
+        abbreviation = {
        'Общество с ограниченной ответственностью': 'OOO',
        'Публичное акционерное общество': 'ПAO',
        'Акционерное общество': 'AO'
         }
 
    # Замена полных названий на аббревиатуры
-       df['Наименование эмитента'] = df['Naimenovanie emitenta'].replace(abbreviations)
+       df['Наименование эмитента'] = df['Наименование эмитента'].replace(abbreviations)
         
         def highlight_rows(row):
             return ['background-color: lightgreen' if row['Идентификатор выпуска*'] == "Не присвоен" else '' for _ in row]
