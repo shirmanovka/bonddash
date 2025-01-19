@@ -44,7 +44,8 @@ if st.button("Скачать данные"):
         def highlight_rows(row):
             return ['background-color: green' if row['Идентификатор выпуска*'] == "Не присвоен" else '' for _ in row]
 
-        # Применение стилизации
+        df = df.tail(5)
         styled_df = df.style.apply(highlight_rows, axis=1)
 
-        st.dataframe(styled_df.tail(5))  # Вывод последних 5 строк DataFrame
+        # Вывод последних 5 строк DataFrame с примененной стилизацией
+        st.dataframe(styled_df) 
