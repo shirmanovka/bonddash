@@ -5,6 +5,3 @@ openpyxl
 numpy
 requests
 plotly.express
-smtplib
-schedule
-time
