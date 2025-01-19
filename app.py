@@ -42,7 +42,7 @@ if st.button("Скачать данные"):
         df = df[columns_to_keep]
         
         def highlight_rows(row):
-            return ['background-color: green' if row['Идентификатор выпуска*'] == "Не присвоен" else '' for _ in row]
+            return ['background-color: lightgreen' if row['Идентификатор выпуска*'] == "Не присвоен" else '' for _ in row]
 
         df = df.tail(5)
         styled_df = df.style.apply(highlight_rows, axis=1)
