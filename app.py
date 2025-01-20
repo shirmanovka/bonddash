@@ -54,13 +54,21 @@ if st.button("Скачать данные"):
         df = df.tail(10)
         
         styled_df = df.style.apply(highlight_rows, axis=1)
-        
+
+
         for full_name, abbreviation in abbreviation.items():
             df['Наименование эмитента'] = df['Наименование эмитента'].replace(full_name, abbreviation, regex=True)
         
         styled_df = df.style.apply(highlight_rows, axis=1)    
             # Вывод последних 5 строк DataFrame с примененной стилизацией
+            # Новый DataFrame для условия "Не присвоен"
+        new_df = df[df['Идентификатор выпуска*'] == "Не присвоен"]
+        new_df = new_df[['Наименование эмитента', 'Категория(тип) ценной бумаги', 'Идентификатор выпуска*']].tail(5)
 
+        styled_new_df = new_df.style.apply(highlight_rows, axis=1)  # Применение стиля к новому DataFrame
+        
+
+        
         st.markdown("""
             <style>
                 .dataframe th, .dataframe td {
@@ -73,5 +81,7 @@ if st.button("Скачать данные"):
         """, unsafe_allow_html=True)
 
         
-        st.dataframe(styled_df.format({'ИНН эмитента': '{:.0f}'}))
-    
+        st.dataframe(styled_df.format({'ИНН эмитента': '{:.0f}'}), use_container_width=True)  # Основной DataFrame
+        
+        st.subheader("Последние заявки эмитентов где идентификатор выпуска еще не присвоен")
+        st.dataframe(styled_new_df, use_container_width=True)  # Новый DataFrame
