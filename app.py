@@ -83,5 +83,5 @@ if st.button("Скачать данные"):
         
         st.dataframe(styled_df.format({'ИНН эмитента': '{:.0f}'}), use_container_width=True)  # Основной DataFrame
         
-        st.subheader("Последние заявки эмитентов где идентификатор выпуска еще не присвоен")
+        st.subheader("Последние заявки эмитентов на регистрацию нового выпуска")
         st.dataframe(styled_new_df, use_container_width=True)  # Новый DataFrame
