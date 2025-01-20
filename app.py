@@ -51,6 +51,11 @@ if st.button("Скачать данные"):
         def highlight_rows(row):
             return ['background-color: lightgreen' if row['Идентификатор выпуска*'] == "Не присвоен" else '' for _ in row]
 
+        new_df = df[df['Идентификатор выпуска*'] == "Не присвоен"]
+        new_df = new_df[['Наименование эмитента', 'Категория(тип) ценной бумаги', 'Идентификатор выпуска*']].tail(5)
+
+        styled_new_df = new_df.style.apply(highlight_rows, axis=1)  # Применение стиля к новому DataFrame
+        
         df = df.tail(10)
         
         styled_df = df.style.apply(highlight_rows, axis=1)
@@ -62,11 +67,6 @@ if st.button("Скачать данные"):
         styled_df = df.style.apply(highlight_rows, axis=1)    
             # Вывод последних 5 строк DataFrame с примененной стилизацией
             # Новый DataFrame для условия "Не присвоен"
-        new_df = df[df['Идентификатор выпуска*'] == "Не присвоен"]
-        new_df = new_df[['Наименование эмитента', 'Категория(тип) ценной бумаги', 'Идентификатор выпуска*']].tail(5)
-
-        styled_new_df = new_df.style.apply(highlight_rows, axis=1)  # Применение стиля к новому DataFrame
-        
 
         
         st.markdown("""
